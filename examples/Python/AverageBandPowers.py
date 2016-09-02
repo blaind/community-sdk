@@ -102,7 +102,7 @@ while (1):
                     #                                           low_betaValue.value, high_betaValue.value, gammaValue.value)
                  
             print dat
-            send_payload(dat)
+            if len(dat) > 0: send_payload(dat)
 
     elif state != 0x0600:
         print "Internal error in Emotiv Engine ! "
