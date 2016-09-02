@@ -3,6 +3,8 @@ import os
 import platform
 import time
 import ctypes
+import requests
+import json
 
 from array import *
 from ctypes import *
@@ -68,6 +70,14 @@ if libEDK.IEE_EngineConnect("Emotiv Systems-5") != 0:
 
 print "Theta, Alpha, Low_beta, High_beta, Gamma \n"
 
+def send_payload(dat):
+    r = requests.post("http://localhost:3000/", data={ 'data': dat})
+    print r
+
+#while True:
+#    send_payload([123,3,4,55])
+#    time.sleep(1)
+
 while (1):
     state = libEDK.IEE_EngineGetNextEvent(eEvent)
     
@@ -80,14 +90,20 @@ while (1):
             print "User added"
                         
         if ready == 1:
+            dat = []
+
             for i in channelList: 
                 result = c_int(0)
                 result = libEDK.IEE_GetAverageBandPowers(userID, i, theta, alpha, low_beta, high_beta, gamma)
                 
                 if result == 0:    #EDK_OK
-                    print "%.6f, %.6f, %.6f, %.6f, %.6f \n" % (thetaValue.value, alphaValue.value, 
-                                                               low_betaValue.value, high_betaValue.value, gammaValue.value)
+                    dat.append([thetaValue.value, alphaValue.value,low_betaValue.value, high_betaValue.value, gammaValue.value])
+                    #print "%.6f, %.6f, %.6f, %.6f, %.6f \n" % (thetaValue.value, alphaValue.value, 
+                    #                                           low_betaValue.value, high_betaValue.value, gammaValue.value)
                  
+            print dat
+            send_payload(dat)
+
     elif state != 0x0600:
         print "Internal error in Emotiv Engine ! "
     time.sleep(0.1)
