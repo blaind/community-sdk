@@ -71,8 +71,11 @@ if libEDK.IEE_EngineConnect("Emotiv Systems-5") != 0:
 print "Theta, Alpha, Low_beta, High_beta, Gamma \n"
 
 def send_payload(dat):
-    r = requests.post("http://localhost:3000/", data={ 'data': dat})
-    print r
+    try:
+        r = requests.post("http://localhost:3000/", data={ 'data': dat})
+        print r
+    except:
+        pass
 
 #while True:
 #    send_payload([123,3,4,55])
